@@ -2,9 +2,14 @@
 
 import itertools
 
-# import cmudict
 import pronouncing
+from english_words import get_english_words_set
+from num2words import num2words
 from syllables import estimate
+
+# import cmudict
+
+ENGLISH_WORDS = get_english_words_set(["web2"], lower=True)
 
 
 def generate_combinations(letters, word_length):
@@ -28,13 +33,37 @@ def is_two_sylable(word):
 
 def main():
     """Generate all possible combinations of letters of a given word length."""
+    the_name_filename = "possible_names.txt"
+    with open(the_name_filename, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+        last_name_found = lines[-1].strip()
+        if last_name_found == "":
+            last_name_found = lines[-1].strip()
+
     alphabet = "abcdefghijklmnopqrstuvwxyz"
     word_length = 6
     name_generator = generate_combinations(alphabet, word_length)
-    for i in range(100000):
-        generated_name = next(name_generator)
-        if is_two_sylable(generated_name):
-            print(generated_name)
+    combinations_to_check = 700000000
+    mark_every_n = 100000
+    print(
+        f"""
+Generating the first {num2words(combinations_to_check)} letter combinations of {num2words(word_length)} letters, 
+searching for two syllable words that are pronouncable in english.
+The . dots show every {mark_every_n} names checked.
+Started from the last name found: {last_name_found}"""
+    )
+    with open(the_name_filename, "a", encoding="utf-8") as f:
+        for i in range(combinations_to_check):
+            if i % mark_every_n == 0:
+                print(".", end="")
+            generated_name = next(name_generator)
+            if generated_name > last_name_found:
+                if is_two_sylable(generated_name):
+                    f.write(
+                        ("📖 " if generated_name in ENGLISH_WORDS else "🔰 ")
+                        + generated_name
+                        + "\n"
+                    )
 
 
 main()

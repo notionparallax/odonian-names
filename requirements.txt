@@ -1,3 +1,5 @@
-syllables
 cmudict
+english-words
 pronouncing
+syllables
+num2words
