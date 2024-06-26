@@ -3,13 +3,14 @@
 import itertools
 
 import pronouncing
-from english_words import get_english_words_set
+
+# from english_words import get_english_words_set
 from num2words import num2words
 from syllables import estimate
 
 # import cmudict
 
-ENGLISH_WORDS = get_english_words_set(["web2"], lower=True)
+# ENGLISH_WORDS = get_english_words_set(["web2"], lower=True)
 
 
 def generate_combinations(letters, word_length):
@@ -33,15 +34,11 @@ def is_two_sylable(word):
 
 def main():
     """Generate all possible combinations of letters of a given word length."""
-    the_name_filename = "possible_names.txt"
-    with open(the_name_filename, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-        last_name_found = lines[-1].strip()
-        if last_name_found == "":
-            last_name_found = lines[-1].strip()
-
     alphabet = "abcdefghijklmnopqrstuvwxyz"
-    word_length = 6
+    word_length = 5
+    the_name_filename = f"possible_names_{word_length}.txt"
+    last_name_found = get_last_name(the_name_filename)
+
     name_generator = generate_combinations(alphabet, word_length)
     combinations_to_check = 700000000
     mark_every_n = 100000
@@ -60,10 +57,19 @@ Started from the last name found: {last_name_found}"""
             if generated_name > last_name_found:
                 if is_two_sylable(generated_name):
                     f.write(
-                        ("📖 " if generated_name in ENGLISH_WORDS else "🔰 ")
-                        + generated_name
+                        # ("📖 " if generated_name in ENGLISH_WORDS else "🔰 ")
+                        generated_name
                         + "\n"
                     )
+
+
+def get_last_name(the_name_filename):
+    with open(the_name_filename, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+        last_name_found = lines[-1].strip()
+        if last_name_found == "":
+            last_name_found = lines[-1].strip()
+    return last_name_found
 
 
 main()
